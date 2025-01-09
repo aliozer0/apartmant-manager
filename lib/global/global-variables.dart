@@ -1,10 +1,13 @@
-//FontSize:13
 import 'package:flutter/material.dart';
 
 import 'index.dart';
 
 String? selectedlang;
+int? hotelId;
+
+String? apartmentName;
 BehaviorSubject<bool> isLoading$ = BehaviorSubject.seeded(false);
+late SharedPreferences prefs;
 
 TextStyle k30Trajan(BuildContext context, {Color? color}) {
   return TextStyle(color: color ?? (Colors.black87), fontSize: MediaQuery.of(context).size.width / 30, fontFamily: "TrajanProBold");

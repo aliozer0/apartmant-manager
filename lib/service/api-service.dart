@@ -88,19 +88,18 @@ class APIService {
     return [];
   }
 
-  Future<List<News>> fetchNews(int hotelId, DateTime startDate, DateTime endDate) async {
-    final Map<String, dynamic> requestBody = {
-      "Action": "Execute",
-      "Object": "SP_MOBILE_APARTMENT_NEWS_LIST",
-      "Parameters": {
-        "HOTELID": hotelId,
-        "STARTDATE": DateFormat('d.M.yy').format(startDate),
-        "ENDDATE": DateFormat('d.M.yy').format(endDate),
-      }
-    };
-
+  Future<RequestResponse?> fetchNews(DateTime startDate, DateTime endDate) async {
     try {
-      var response = await http.post(Uri.parse(GlobalConfig.url), body: json.encode(requestBody));
+      var response = await http.post(Uri.parse(GlobalConfig.url),
+          body: json.encode({
+            "Action": "Execute",
+            "Object": "SP_MOBILE_APARTMENT_NEWS_LIST",
+            "Parameters": {
+              "HOTELID": GlobalConfig.hotelId,
+              "STARTDATE": DateFormat('d.M.yy').format(startDate),
+              "ENDDATE": DateFormat('d.M.yy').format(endDate)
+            }
+          }));
 
       if (response.statusCode == 200) {
         var data = json.decode(utf8.decode(response.bodyBytes));
@@ -117,6 +116,6 @@ class APIService {
     } catch (e) {
       debugPrint("Failed to upload news: $e");
     }
-    return [];
+    return null;
   }
 }

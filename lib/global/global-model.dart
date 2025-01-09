@@ -1,5 +1,12 @@
-
 import 'index.dart';
+
+class RequestResponse {
+  String message;
+  bool result;
+  String? resultResponse;
+
+  RequestResponse({required this.message, required this.result, this.resultResponse});
+}
 
 class Apartment {
   final int id;
@@ -65,7 +72,9 @@ class Apartment {
       email: json['EMAIL'] ?? '',
     );
   }
-}class Fee {
+}
+
+class Fee {
   final int id;
   final int hotelId;
   final int flatId;
@@ -107,6 +116,7 @@ class Apartment {
     );
   }
 }
+
 class News {
   final int id;
   final int hotelId;
@@ -131,12 +141,10 @@ class News {
       endDate: DateTime.parse(json['ENDDATE'] ?? ''),
     );
   }
-
 }
 
 class PaymentModel {
-  final BehaviorSubject<Map<String, dynamic>> formData$ =
-  BehaviorSubject<Map<String, dynamic>>.seeded({
+  final BehaviorSubject<Map<String, dynamic>> formData$ = BehaviorSubject<Map<String, dynamic>>.seeded({
     'pan': '',
     'expiryMonth': '',
     'expiryYear': '',

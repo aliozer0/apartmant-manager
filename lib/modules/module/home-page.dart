@@ -5,29 +5,14 @@ import 'package:flutter/material.dart';
 import '../../global/index.dart';
 
 class HomePage extends StatefulWidget {
-  final String blockName;
-  final int hotelId;
-
-  HomePage({Key? key, required this.blockName, required this.hotelId}) : super(key: key);
+  HomePage({Key? key}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  final APIService apiService = GetIt.I<APIService>();
-
-  @override
-  void initState() {
-    super.initState();
-    apiService.fetchApartments(widget.blockName, widget.hotelId);
-    apiService.fetchNews(widget.hotelId, DateTime.parse('2024-01-01'), DateTime.parse('2025-01-01'));
-  }
-
-  Future<void> refreshData() async {
-    await apiService.fetchApartments(widget.blockName, widget.hotelId);
-    await Future.delayed(const Duration(seconds: 1));
-  }
+  final apiService = GetIt.I<APIService>();
 
   @override
   Widget build(BuildContext context) {
@@ -69,15 +54,7 @@ class _HomePageState extends State<HomePage> {
                           color: Colors.green,
                           W: W,
                           onTap: () {
-                            Navigator.push(
-                                context,
-                                RouteAnimation.createRoute(
-                                    NewsPage(
-                                        hotelId: widget.hotelId,
-                                        startDate: DateTime.now().toString(),
-                                        endDate: DateTime.now().add(const Duration(days: 30)).toString()),
-                                    1,
-                                    0));
+                            Navigator.push(context, RouteAnimation.createRoute(NewsPage(), 1, 0));
                           }),
                     ])
                   ])));
@@ -99,17 +76,9 @@ class _HomePageState extends State<HomePage> {
         width: W / 2.28,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(10.0),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
-              spreadRadius: 5,
-              blurRadius: 3,
-              offset: const Offset(0, 3),
-            ),
-          ],
-        ),
+            color: color,
+            borderRadius: BorderRadius.circular(10.0),
+            boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.1), spreadRadius: 5, blurRadius: 3, offset: const Offset(0, 3))]),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,

@@ -69,15 +69,7 @@ class _DetailPageState extends State<DetailPage> {
                   children: [
                     IconButton(
                       icon: const Icon(Icons.arrow_back),
-                      onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => HomePage(
-                            blockName: blockName,
-                            hotelId: hotelId,
-                          ),
-                        ),
-                      ),
+                      onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage())),
                       color: appText,
                     ),
                     Expanded(

@@ -24,54 +24,26 @@ class _NewsListState extends State<NewsList> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Colors.white,
-      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      elevation: 3,
-      child: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
+        color: Colors.white,
+        margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        shape: RoundedRectangleBorder(borderRadius: borderRadius10),
+        elevation: 3,
+        child: Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                 const Icon(Icons.notifications, color: Colors.blue, size: 30),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: Text(
-                    widget.news.content,
-                    style: k25Trajan(context).copyWith(fontSize: 16, fontWeight: FontWeight.bold),
-                    softWrap: true,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 10,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Text(
-                  formatDate(widget.news.startDate.toString()),
-                  style:  k25Trajan(context).copyWith(fontSize: 12),
-                ),
-                Text(
-                  ' - ',
-                  style:  k25Trajan(context).copyWith(fontSize: 12),
-                ),
-                Text(
-                  formatDate(widget.news.endDate.toString()),
-                  style:  k25Trajan(context).copyWith(fontSize: 12),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
+                    child: Text(widget.news.content,
+                        style: k25Trajan(context).copyWith(fontSize: 16, fontWeight: FontWeight.bold), softWrap: true, overflow: TextOverflow.ellipsis))
+              ]),
+              const SizedBox(height: 10),
+              Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                Text(formatDate(widget.news.startDate.toString()), style: k25Trajan(context).copyWith(fontSize: 12)),
+                Text(' - ', style: k25Trajan(context).copyWith(fontSize: 12)),
+                Text(formatDate(widget.news.endDate.toString()), style: k25Trajan(context).copyWith(fontSize: 12))
+              ])
+            ])));
   }
 }

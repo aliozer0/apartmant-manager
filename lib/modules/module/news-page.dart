@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 
-
 import '../../global/index.dart';
 import '../../index.dart';
 
 class NewsPage extends StatefulWidget {
-  final int hotelId;
-  final String startDate;
-  final String endDate;
-
-  const NewsPage({Key? key, required this.hotelId, required this.startDate, required this.endDate}) : super(key: key);
+  const NewsPage({
+    Key? key,
+  }) : super(key: key);
 
   @override
   _NewsPageState createState() => _NewsPageState();
@@ -21,36 +18,29 @@ class _NewsPageState extends State<NewsPage> {
   @override
   void initState() {
     super.initState();
-    // apiService.fetchNews(widget.hotelId, DateTime.parse(widget.startDate),
-    //     DateTime.parse(widget.endDate));
+    apiService.fetchNews(DateTime.parse('2024-01-01'), DateTime.parse('2026-01-01'));
   }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
+      appBar: AppBar(title: Text('Announcements'.tr()), backgroundColor: GlobalConfig.primaryColor),
       body: StreamBuilder(
           stream: apiService.news$.stream,
           builder: (context, snapshot) {
             if (apiService.news$.value == null) {
-              return Center(
-                child: CircularProgressIndicator(color: GlobalConfig.primaryColor),
-              );
+              return Center(child: CircularProgressIndicator(color: GlobalConfig.primaryColor));
             } else if (apiService.news$.value!.isEmpty) {
-              return const Center(
-                child: Text('Duyuru Bulunamadı', style: normalTextStyle),
-              );
+              return Center(child: Text('No Announcement Found'.tr(), style: k19_5Gilroy(context)));
             }
-            final news = apiService.news$.value;
-
             apiService.news$.value!.sort((a, b) => b.startDate.compareTo(a.startDate));
-
             return Container(
               color: background,
               child: ListView.builder(
-                itemCount: news!.length,
+                itemCount: apiService.news$.value!.length,
                 itemBuilder: (context, index) {
-                  return NewsList(news: news[index]);
+                  return NewsList(news: apiService.news$.value![index]);
                 },
               ),
             );
