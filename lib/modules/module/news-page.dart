@@ -1,50 +1,67 @@
 import 'package:flutter/material.dart';
 
 import '../../global/index.dart';
-import '../../index.dart';
 
 class NewsPage extends StatefulWidget {
-  const NewsPage({
-    Key? key,
-  }) : super(key: key);
+  const NewsPage({Key? key}) : super(key: key);
 
   @override
   _NewsPageState createState() => _NewsPageState();
 }
 
 class _NewsPageState extends State<NewsPage> {
-  final APIService apiService = GetIt.I<APIService>();
+  final globalService = GetIt.I<GlobalService>();
 
   @override
   void initState() {
+    globalService.fetchNews(DateTime.parse('2024-01-01'), DateTime.parse('2026-01-01'));
     super.initState();
-    apiService.fetchNews(DateTime.parse('2024-01-01'), DateTime.parse('2026-01-01'));
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Scaffold(
-      appBar: AppBar(title: Text('Announcements'.tr()), backgroundColor: GlobalConfig.primaryColor),
-      body: StreamBuilder(
-          stream: apiService.news$.stream,
-          builder: (context, snapshot) {
-            if (apiService.news$.value == null) {
-              return Center(child: CircularProgressIndicator(color: GlobalConfig.primaryColor));
-            } else if (apiService.news$.value!.isEmpty) {
-              return Center(child: Text('No Announcement Found'.tr(), style: k19_5Gilroy(context)));
-            }
-            apiService.news$.value!.sort((a, b) => b.startDate.compareTo(a.startDate));
-            return Container(
-              color: background,
-              child: ListView.builder(
-                itemCount: apiService.news$.value!.length,
-                itemBuilder: (context, index) {
-                  return NewsList(news: apiService.news$.value![index]);
-                },
-              ),
-            );
-          }),
-    ));
+    double W = MediaQuery.of(context).size.width;
+    double H = MediaQuery.of(context).size.height;
+    return Scaffold(
+        appBar: AppBar(
+            title: Text('Announcements'.tr()), leading: InkWell(onTap: () => Navigator.pop(context), child: const Icon(Icons.arrow_back_ios_new_rounded))),
+        body: StreamBuilder(
+            stream: globalService.news$.stream,
+            builder: (context, snapshot) {
+              if (globalService.news$.value == null) {
+                return Center(child: CircularProgressIndicator(color: GlobalConfig.primaryColor));
+              } else if (globalService.news$.value!.isEmpty) {
+                return Center(child: Text('No Announcement Found'.tr(), style: k19_5Gilroy(context)));
+              }
+              globalService.news$.value!.sort((a, b) => b.startDate.compareTo(a.startDate));
+              return Container(
+                color: Colors.grey[200],
+                height: H * 0.9,
+                child: ListView.builder(
+                    itemCount: globalService.news$.value!.length,
+                    itemBuilder: (context, index) {
+                      var news = globalService.news$.value![index];
+                      return Container(
+                          decoration: BoxDecoration(borderRadius: borderRadius10, color: Colors.white),
+                          padding: paddingAll5,
+                          margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                              Icon(Icons.notifications, color: GlobalConfig.primaryColor, size: 30),
+                              SizedBox(width: W / 30),
+                              Expanded(child: Text(news.content, style: k25Trajan(context)))
+                            ]),
+                            SizedBox(height: W / 40),
+                            Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                              Text(DateFormat('dd MMM yyyy', 'tr_TR').format(DateTime.parse(news.startDate.toString())),
+                                  style: k25Trajan(context).copyWith(fontSize: 12)),
+                              Text(' - ', style: k25Trajan(context).copyWith(fontSize: 12)),
+                              Text(DateFormat('dd MMM yyyy', 'tr_TR').format(DateTime.parse(news.endDate.toString())),
+                                  style: k25Trajan(context).copyWith(fontSize: 12)),
+                            ])
+                          ]));
+                    }),
+              );
+            }));
   }
 }

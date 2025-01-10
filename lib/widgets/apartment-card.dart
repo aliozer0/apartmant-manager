@@ -1,15 +1,10 @@
 import 'package:apartmantmanager/Global/global-variables.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
-
-import 'package:url_launcher/url_launcher.dart';
 
 import '../global/global-model.dart';
-import '../index.dart';
 
 class ApartmentCard extends StatelessWidget {
   final Apartment apartment;
-  final APIService apiService = GetIt.I<APIService>();
 
   ApartmentCard({super.key, required this.apartment});
 
@@ -50,16 +45,14 @@ class ApartmentCard extends StatelessWidget {
                   if (apartment.hotelId == null) {
                     throw ArgumentError('Hotel ID cannot be null');
                   }
-                  final fees = await apiService.fetchFees(apartmentId!, apartment.hotelId!);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => DetailPage(
-                        apartment: apartment,
-                        fees: fees
-                      ),
-                    ),
-                  );
+                  // final fees = await apiService.fetchFees(apartmentId!, apartment.hotelId!);
+                  //todo: implement detail page
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //     builder: (context) => DetailPage(apartment: apartment, fees: fees),
+                  //   ),
+                  // );
                 } catch (e) {
                   print('Failed to load fees: $e');
                 }
@@ -123,7 +116,7 @@ class ApartmentCard extends StatelessWidget {
                                           ),
                                         ),
                                         onPressed: () {
-                                          makePhoneCall(phone);
+                                          // makePhoneCall(phone);
                                         },
                                       ),
                                       const SizedBox(width: 10),
@@ -134,7 +127,7 @@ class ApartmentCard extends StatelessWidget {
                                           child: const Icon(Icons.email, color: Colors.white),
                                         ),
                                         onPressed: () {
-                                          sendEmail(email);
+                                          // sendEmail(email);
                                         },
                                       ),
                                       const SizedBox(width: 10),
@@ -145,7 +138,7 @@ class ApartmentCard extends StatelessWidget {
                                           child: const Icon(Icons.sms, color: Colors.white),
                                         ),
                                         onPressed: () {
-                                          sendSMS(phone);
+                                          // sendSMS(phone);
                                         },
                                       ),
                                     ],
@@ -154,7 +147,10 @@ class ApartmentCard extends StatelessWidget {
                                   if (apartment.balance != null && apartment.balance != 0)
                                     Expanded(
                                         child: Text('${apartment.balance} TL',
-                                            style: k25Trajan(context).copyWith(color: Colors.red), overflow: TextOverflow.ellipsis, softWrap: true, maxLines: 3))
+                                            style: k25Trajan(context).copyWith(color: Colors.red),
+                                            overflow: TextOverflow.ellipsis,
+                                            softWrap: true,
+                                            maxLines: 3))
                                 ]))
                           ]))
                         ])
@@ -169,15 +165,10 @@ class ApartmentCard extends StatelessWidget {
           top: 5.0,
           child: Container(
             padding: const EdgeInsets.all(8.0),
-            decoration: const BoxDecoration(
-              color: Colors.black87,
-              shape: BoxShape.circle),
+            decoration: const BoxDecoration(color: Colors.black87, shape: BoxShape.circle),
             child: Row(
               children: [
-                Text(
-                  flatNumber.toString(),
-                  style: k25Trajan(context).copyWith(color: Colors.black)
-                ),
+                Text(flatNumber.toString(), style: k25Trajan(context).copyWith(color: Colors.black)),
                 const Icon(Icons.home, color: Colors.black),
               ],
             ),
@@ -185,32 +176,5 @@ class ApartmentCard extends StatelessWidget {
         ),
       ],
     );
-  }
-
-  Future<void> makePhoneCall(String phoneNumber) async {
-    final url = 'tel:$phoneNumber';
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
-
-  Future<void> sendEmail(String email) async {
-    final url = 'mailto:$email';
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
-
-  Future<void> sendSMS(String phoneNumber) async {
-    final url = 'sms:$phoneNumber';
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
   }
 }

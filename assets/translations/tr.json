@@ -1,6 +1,13 @@
 {
   "Welcome!": "Hoşgeldiniz!",
   "Enter the code here": "Kodu buraya girin",
+  "Total Amount": "Toplam Tutar",
   "Announcements": "Duyurular",
-  "No Announcement Found": "Duyuru Bulunamadı"
+  "No Announcement Found": "Duyuru Bulunamadı",
+  "Apartment Guests": "Apartman Sakinleri",
+  "Phone Number:": "Telefon Numarası:",
+  "All": "Hepsi",
+  "Income": "Gelir",
+  "Expenses": "Gider",
+  "Income & Expenses": "Gelir & Giderler"
 }

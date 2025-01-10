@@ -1,6 +1,15 @@
 {
   "Welcome!": "Welcome!",
+  "Your payment has been made successfully.": "Your payment has been made successfully.",
+  "Total Amount": "Total Amount",
   "Enter the code here": "Enter the code here",
+  "Your payment was not processed. Please try again.": "Your payment was not processed. Please try again.",
   "Announcements": "Announcements",
-  "No Announcement Found": "No Announcement Found"
+  "No Announcement Found": "No Announcement Found",
+  "Apartment Guests": "Apartment Guests",
+  "Phone Number:": "Phone Number:",
+  "Income & Expenses": "Income & Expenses",
+  "All": "All",
+  "Income": "Income",
+  "Expenses": "Expenses"
 }

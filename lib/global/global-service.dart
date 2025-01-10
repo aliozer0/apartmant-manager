@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:http/http.dart' as http;
 
 import 'index.dart';
@@ -21,11 +19,8 @@ class GlobalService {
     };
 
     try {
-      var response = await http.post(
-        Uri.parse('${GlobalConfig.url}/Execute/SP_MOBILE_APARTMENT_FLATS_LIST'),
-        headers: {'User-Agent': 'appartmentApp_1.0.0'},
-        body: json.encode(requestBody),
-      );
+      var response = await http.post(Uri.parse('${GlobalConfig.url}/Execute/SP_MOBILE_APARTMENT_FLATS_LIST'),
+          headers: {'User-Agent': 'appartmentApp_1.0.0'}, body: json.encode(requestBody));
 
       if (response.statusCode == 200) {
         var data = json.decode(utf8.decode(response.bodyBytes));

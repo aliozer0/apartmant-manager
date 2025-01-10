@@ -1,22 +1,13 @@
-import 'dart:convert';
-
-import 'package:apartmantmanager/Global/global-variables.dart';
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
-import '../../global/global-model.dart';
+import '../../global/index.dart';
 
 class WebViewScreen extends StatefulWidget {
   final String htmlContent;
   final Apartment apartment;
   final List<Fee> fees;
 
-  WebViewScreen({
-    required this.htmlContent,
-    required this.apartment,
-    required this.fees,
-  });
+  WebViewScreen({required this.htmlContent, required this.apartment, required this.fees});
 
   @override
   _WebViewScreenState createState() => _WebViewScreenState();
@@ -67,24 +58,20 @@ class _WebViewScreenState extends State<WebViewScreen> {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
+        double W = MediaQuery.of(context).size.width;
         return Dialog(
           child: Container(
-            padding: EdgeInsets.all(16.0),
+            padding: paddingAll5,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Lottie.asset(
-                  'assets/success-animation.json',
-                  repeat: false,
-                  onLoaded: (composition) {
-                    Future.delayed(composition.duration * 1, () {
-                      Navigator.of(context).pop();
-                    });
-                  }
-                ),
-                SizedBox(height: 16.0),
-                Text('Ödemeniz başarıyla gerçekleşti',
-                    style: k25Trajan(context).copyWith(fontSize: 16)),
+                Lottie.asset('assets/success-animation.json', repeat: false, onLoaded: (composition) {
+                  Future.delayed(composition.duration * 1, () {
+                    Navigator.of(context).pop();
+                  });
+                }),
+                SizedBox(height: W / 40),
+                Text('Your payment has been made successfully.'.tr(), style: k25Trajan(context).copyWith(fontSize: 16)),
               ],
             ),
           ),
@@ -99,41 +86,29 @@ class _WebViewScreenState extends State<WebViewScreen> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return Dialog(
-          child: Container(
-            padding: EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Lottie.asset(
-                  'assets/failure-animation.json',
-                  repeat: false,
-                  onLoaded: (composition) {
-                    Future.delayed(composition.duration * 1, () {
-                      Navigator.of(context).pop();
-                    });
-                  },
-                ),
-                SizedBox(height: 16.0),
-                Text(
-                  'Ödemeniz gerçekleştirilemedi. Lütfen tekrar deneyin.',
-                  style:k25Trajan(context) .copyWith(fontSize: 16),
-                ),
-              ],
-            ),
-          ),
-        );
+            child: Container(
+                padding: paddingAll10,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Lottie.asset('assets/failure-animation.json', repeat: false, onLoaded: (composition) {
+                      Future.delayed(composition.duration * 1, () {
+                        Navigator.of(context).pop();
+                      });
+                    }),
+                    const SizedBox(height: 16.0),
+                    Text(
+                      'Your payment was not processed. Please try again.'.tr(),
+                      style: k25Trajan(context),
+                    )
+                  ],
+                )));
       },
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: WebViewWidget(
-          controller: webController,
-        ),
-      ),
-    );
+    return SafeArea(child: Scaffold(body: WebViewWidget(controller: webController)));
   }
 }

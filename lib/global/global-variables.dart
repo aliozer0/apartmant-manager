@@ -10,42 +10,42 @@ BehaviorSubject<bool> isLoading$ = BehaviorSubject.seeded(false);
 late SharedPreferences prefs;
 
 TextStyle k30Trajan(BuildContext context, {Color? color}) {
-  return TextStyle(color: color ?? (Colors.black87), fontSize: MediaQuery.of(context).size.width / 30, fontFamily: "TrajanProBold");
+  return TextStyle(color: color ?? (Colors.black87), fontSize: MediaQuery.of(context).size.width / 30, fontFamily: "OpenSansBold");
 }
 
 //FontSize:14
 TextStyle k28Trajan(BuildContext context, {Color? color}) {
-  return TextStyle(color: color ?? (Colors.black87), fontSize: MediaQuery.of(context).size.width / 28, fontFamily: "TrajanProBold");
+  return TextStyle(color: color ?? (Colors.black87), fontSize: MediaQuery.of(context).size.width / 28, fontFamily: "OpenSansBold");
 }
 
 //FontSize:15
 TextStyle k26Trajan(BuildContext context, {Color? color}) {
-  return TextStyle(color: color ?? (Colors.black87), fontSize: MediaQuery.of(context).size.width / 26, fontFamily: "TrajanProBold");
+  return TextStyle(color: color ?? (Colors.black87), fontSize: MediaQuery.of(context).size.width / 26, fontFamily: "OpenSansBold");
 }
 
 //FontSize:16
 TextStyle k25Trajan(BuildContext context, {Color? color}) {
-  return TextStyle(color: color ?? (Colors.black87), fontSize: MediaQuery.of(context).size.width / 25, fontFamily: "TrajanProBold");
+  return TextStyle(color: color ?? (Colors.black87), fontSize: MediaQuery.of(context).size.width / 25, fontFamily: "OpenSansBold");
 }
 
 //FontSize:17
 TextStyle k23Trajan(BuildContext context, {Color? color}) {
-  return TextStyle(color: color ?? (Colors.black87), fontSize: MediaQuery.of(context).size.width / 23, fontFamily: "TrajanProBold");
+  return TextStyle(color: color ?? (Colors.black87), fontSize: MediaQuery.of(context).size.width / 23, fontFamily: "OpenSansBold");
 }
 
 //FontSize:18
 TextStyle k22Trajan(BuildContext context, {Color? color}) {
-  return TextStyle(color: color ?? (Colors.black87), fontSize: MediaQuery.of(context).size.width / 22, fontFamily: "TrajanProBold");
+  return TextStyle(color: color ?? (Colors.black87), fontSize: MediaQuery.of(context).size.width / 22, fontFamily: "OpenSansBold");
 }
 
 //FontSize:19
 TextStyle k20_5Trajan(BuildContext context, {Color? color}) {
-  return TextStyle(color: color ?? (Colors.black87), fontSize: MediaQuery.of(context).size.width / 20.5, fontFamily: "TrajanProBold");
+  return TextStyle(color: color ?? (Colors.black87), fontSize: MediaQuery.of(context).size.width / 20.5, fontFamily: "OpenSansBold");
 }
 
 //FontSize:20
 TextStyle k19_5Trajan(BuildContext context, {Color? color}) {
-  return TextStyle(color: color ?? (Colors.black87), fontSize: MediaQuery.of(context).size.width / 19.5, fontFamily: "TrajanProBold");
+  return TextStyle(color: color ?? (Colors.black87), fontSize: MediaQuery.of(context).size.width / 19.5, fontFamily: "OpenSansBold");
 }
 
 TextStyle k50Gilroy(BuildContext context, {Color? color, bool? isBold}) {
@@ -53,19 +53,19 @@ TextStyle k50Gilroy(BuildContext context, {Color? color, bool? isBold}) {
       color: color ?? (Colors.black87),
       fontWeight: (isBold ??= false) ? FontWeight.normal : FontWeight.w600,
       fontSize: MediaQuery.of(context).size.width / 50,
-      fontFamily: "Gilroy");
+      fontFamily: "Roboto");
 }
 
 TextStyle k32_5Gilroy(BuildContext context, {Color? color}) {
-  return TextStyle(color: color ?? (Colors.black87), fontSize: MediaQuery.of(context).size.width / 32.5, fontFamily: "Gilroy");
+  return TextStyle(color: color ?? (Colors.black87), fontSize: MediaQuery.of(context).size.width / 32.5, fontFamily: "Roboto");
 }
 
 TextStyle k30Gilroy(BuildContext context, {Color? color}) {
-  return TextStyle(color: color ?? (Colors.black87), fontSize: MediaQuery.of(context).size.width / 30, fontFamily: "Gilroy");
+  return TextStyle(color: color ?? (Colors.black87), fontSize: MediaQuery.of(context).size.width / 30, fontFamily: "Roboto");
 }
 
 TextStyle k28Gilroy(BuildContext context, {Color? color}) {
-  return TextStyle(color: color ?? (Colors.black87), fontSize: MediaQuery.of(context).size.width / 28, fontFamily: "Gilroy");
+  return TextStyle(color: color ?? (Colors.black87), fontSize: MediaQuery.of(context).size.width / 28, fontFamily: "Roboto");
 }
 
 TextStyle k25Gilroy(BuildContext context, {Color? color, bool? isBold}) {
@@ -73,7 +73,7 @@ TextStyle k25Gilroy(BuildContext context, {Color? color, bool? isBold}) {
       color: color ?? (Colors.black87),
       fontWeight: (isBold ??= false) ? FontWeight.normal : FontWeight.bold,
       fontSize: MediaQuery.of(context).size.width / 25,
-      fontFamily: "Gilroy");
+      fontFamily: "Roboto");
 }
 
 TextStyle k26Gilroy(BuildContext context, {Color? color, bool? isBold}) {
@@ -81,24 +81,24 @@ TextStyle k26Gilroy(BuildContext context, {Color? color, bool? isBold}) {
     color: color ?? (Colors.black87),
     fontWeight: (isBold ??= false) ? FontWeight.normal : FontWeight.w600,
     fontSize: MediaQuery.of(context).size.width / 26,
-    fontFamily: "Gilroy",
+    fontFamily: "Roboto",
   );
 }
 
 TextStyle k23Gilroy(BuildContext context, {Color? color}) {
-  return TextStyle(color: color ?? (Colors.black87), fontSize: MediaQuery.of(context).size.width / 23, fontFamily: "Gilroy");
+  return TextStyle(color: color ?? (Colors.black87), fontSize: MediaQuery.of(context).size.width / 23, fontFamily: "Roboto");
 }
 
 TextStyle k22Gilroy(BuildContext context, {Color? color}) {
-  return TextStyle(color: color ?? (Colors.black87), fontSize: MediaQuery.of(context).size.width / 22, fontFamily: "Gilroy");
+  return TextStyle(color: color ?? (Colors.black87), fontSize: MediaQuery.of(context).size.width / 22, fontFamily: "Roboto");
 }
 
 TextStyle k20_5Gilroy(BuildContext context, {Color? color}) {
-  return TextStyle(color: color ?? (Colors.black87), fontSize: MediaQuery.of(context).size.width / 20.5, fontFamily: "Gilroy");
+  return TextStyle(color: color ?? (Colors.black87), fontSize: MediaQuery.of(context).size.width / 20.5, fontFamily: "Roboto");
 }
 
 TextStyle k19_5Gilroy(BuildContext context, {Color? color}) {
-  return TextStyle(color: color ?? (Colors.black87), fontSize: MediaQuery.of(context).size.width / 19.5, fontFamily: "Gilroy");
+  return TextStyle(color: color ?? (Colors.black87), fontSize: MediaQuery.of(context).size.width / 19.5, fontFamily: "Roboto");
 }
 
 EdgeInsets marginAll5 = const EdgeInsets.all(5);

@@ -1,13 +1,8 @@
-import 'dart:convert';
-
-import 'package:apartmantmanager/global/global-config.dart';
-import 'package:apartmantmanager/global/global-variables.dart';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-import '../../global/constants.dart';
-import '../../global/global-model.dart';
+import '../../global/index.dart';
 import '../../index.dart';
 
 class CreditCardFormScreen extends StatefulWidget {
@@ -21,7 +16,7 @@ class CreditCardFormScreen extends StatefulWidget {
 }
 
 class _CreditCardFormScreenState extends State<CreditCardFormScreen> {
-  APIService apiService = APIService();
+  final globalService = GetIt.I<GlobalService>();
   final PaymentModel paymentModel = PaymentModel();
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();

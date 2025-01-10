@@ -1,3 +1,5 @@
+export 'modules/expenses/expenses-service.dart';
+export 'modules/expenses/expenses.dart';
 export 'modules/module/apartmants-guest.dart';
 export 'modules/module/credit-card-form.dart';
 export 'modules/module/detail-page.dart';

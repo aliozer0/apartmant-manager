@@ -10,7 +10,7 @@ class QRScannerController {
   final hotelId$ = BehaviorSubject<int?>.seeded(null);
 
   QRViewController? qrController;
-  final APIService apiService = GetIt.I<APIService>();
+  final apiService = GetIt.I<GlobalService>();
 
   void onQRViewCreated(QRViewController controller, BuildContext context) async {
     qrController = controller;
