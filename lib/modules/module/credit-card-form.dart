@@ -213,7 +213,7 @@ class _CreditCardFormScreenState extends State<CreditCardFormScreen> {
               child: const Center(
                 child: Icon(
                   Icons.credit_card_outlined,
-                  size: 50,
+                  size: 40,
                   color: Colors.white,
                 ),
               ),
