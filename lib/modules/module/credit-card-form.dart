@@ -197,8 +197,8 @@ class _CreditCardFormScreenState extends State<CreditCardFormScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Credit Card Payment',
-            style: TextStyle(color: Colors.white)),
+        title: Text('Credit Card Payment'.tr(),
+            style: const TextStyle(color: Colors.white)),
         backgroundColor: GlobalConfig.primaryColor,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
@@ -285,10 +285,16 @@ class _CreditCardFormScreenState extends State<CreditCardFormScreen> {
 
   Widget _buildCardNumberField() {
     return TextFormField(
+      cursorColor: GlobalConfig.primaryColor,
+      style: AppTextStyles.cardText.copyWith(
+        fontSize: 15,
+      ),
       controller: _cardNumberController,
       decoration: _inputDecoration(
-        label: 'Card Number',
+        label: 'Card Number'.tr(),
         prefixIcon: Icons.credit_card,
+      ).copyWith(
+        floatingLabelStyle: TextStyle(color: GlobalConfig.primaryColor),
       ),
       keyboardType: TextInputType.number,
       inputFormatters: [
@@ -298,10 +304,10 @@ class _CreditCardFormScreenState extends State<CreditCardFormScreen> {
       ],
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return 'Please enter card number';
+          return 'Please enter card number'.tr();
         }
         if (value.replaceAll(' ', '').length < 16) {
-          return 'Please enter valid card number';
+          return 'Please enter valid card number'.tr();
         }
         return null;
       },
@@ -316,15 +322,21 @@ class _CreditCardFormScreenState extends State<CreditCardFormScreen> {
 
   Widget _buildCardHolderField() {
     return TextFormField(
+      cursorColor: GlobalConfig.primaryColor,
+      style: AppTextStyles.cardText.copyWith(
+        fontSize: 15,
+      ),
       controller: _cardHolderController,
       decoration: _inputDecoration(
-        label: 'Card Holder Name',
+        label: 'Card Holder Name'.tr(),
         prefixIcon: Icons.person,
+      ).copyWith(
+        floatingLabelStyle: TextStyle(color: GlobalConfig.primaryColor),
       ),
       textCapitalization: TextCapitalization.characters,
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return 'Please enter card holder name';
+          return 'Please enter card holder name'.tr();
         }
         return null;
       },
@@ -338,10 +350,16 @@ class _CreditCardFormScreenState extends State<CreditCardFormScreen> {
 
   Widget _buildExpiryField() {
     return TextFormField(
+      cursorColor: GlobalConfig.primaryColor,
+      style: AppTextStyles.cardText.copyWith(
+        fontSize: 15,
+      ),
       controller: _expiryController,
       decoration: _inputDecoration(
         label: 'MM/YY',
         prefixIcon: Icons.calendar_today,
+      ).copyWith(
+        floatingLabelStyle: TextStyle(color: GlobalConfig.primaryColor),
       ),
       keyboardType: TextInputType.number,
       inputFormatters: [
@@ -351,10 +369,10 @@ class _CreditCardFormScreenState extends State<CreditCardFormScreen> {
       ],
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return 'Required';
+          return 'Required'.tr();
         }
         if (value.length < 5) {
-          return 'Invalid date';
+          return 'Invalid date'.tr();
         }
         return null;
       },
@@ -369,10 +387,16 @@ class _CreditCardFormScreenState extends State<CreditCardFormScreen> {
 
   Widget _buildCVVField() {
     return TextFormField(
+      cursorColor: GlobalConfig.primaryColor,
+      style: AppTextStyles.cardText.copyWith(
+        fontSize: 15,
+      ),
       controller: _cvvController,
       decoration: _inputDecoration(
         label: 'CVV',
         prefixIcon: Icons.lock,
+      ).copyWith(
+        floatingLabelStyle: TextStyle(color: GlobalConfig.primaryColor),
       ),
       keyboardType: TextInputType.number,
       obscureText: true,
@@ -440,9 +464,14 @@ class _CreditCardFormScreenState extends State<CreditCardFormScreen> {
 
   Widget _buildAmountField() {
     return TextFormField(
+      cursorColor: GlobalConfig.primaryColor,
+      style: AppTextStyles.cardTitle.copyWith(
+        fontSize: 15,
+        color: GlobalConfig.primaryColor,
+      ),
       controller: _amountController,
       decoration: InputDecoration(
-        labelText: 'Amount',
+        labelText: 'Amount'.tr(),
         prefixIcon: Padding(
           padding: const EdgeInsets.only(
               left: 25,
@@ -462,11 +491,6 @@ class _CreditCardFormScreenState extends State<CreditCardFormScreen> {
       ),
       keyboardType: TextInputType.number,
       enabled: false,
-      style: TextStyle(
-        color: GlobalConfig.primaryColor,
-        fontWeight: FontWeight.bold,
-        fontSize: 16,
-      ),
     );
   }
 
@@ -489,12 +513,10 @@ class _CreditCardFormScreenState extends State<CreditCardFormScreen> {
                 valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
               ),
             )
-          : const Text(
-              'Pay Now',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+          : Text(
+              'Pay Now'.tr(),
+              style: AppTextStyles.cardTitle
+                  .copyWith(color: Colors.white, fontSize: 16),
             ),
     );
   }
