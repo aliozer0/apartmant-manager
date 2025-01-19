@@ -322,7 +322,7 @@ class _DetailPageState extends State<DetailPage> {
                       ),
                       const SizedBox(width: 12),
                       Text(
-                        'Pay Outstanding Fees',
+                        'Pay Outstanding Fees'.tr(),
                         style: AppTextStyles.cardTitle.copyWith(
                           color: Colors.white,
                           fontSize: 15,
@@ -421,7 +421,7 @@ class _DetailPageState extends State<DetailPage> {
                                 title: Text(
                                   fee.description.isNotEmpty
                                       ? fee.description
-                                      : 'No Description',
+                                      : 'No Description'.tr(),
                                   style: AppTextStyles.cardTitle.copyWith(
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -558,14 +558,18 @@ Widget _buildOwnerInfo(Apartment apartment) {
         if (apartment.ownerName != null)
           Row(
             children: [
-              const Text(
-                "Owner: ",
-                style: AppTextStyles.bodyText,
+              Text(
+                "${"Home Owner".tr()}: ",
+                style: AppTextStyles.bodyText.copyWith(
+                  fontSize: 12,
+                ),
               ),
               Expanded(
                 child: Text(
                   apartment.ownerName!,
-                  style: AppTextStyles.bodyText,
+                  style: AppTextStyles.bodyText.copyWith(
+                    fontSize: 12,
+                  ),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -576,7 +580,7 @@ Widget _buildOwnerInfo(Apartment apartment) {
                 child: Text(
                   apartment.ownerPhone!,
                   style: AppTextStyles.bodyText.copyWith(
-                    fontWeight: FontWeight.w500,
+                    fontSize: 12,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
