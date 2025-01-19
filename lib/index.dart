@@ -1,11 +1,11 @@
 export 'modules/expenses/expenses-service.dart';
 export 'modules/expenses/expenses.dart';
-export 'modules/module/apartmants-guest.dart';
+export 'modules/module/apartmants-guest-old.dart';
 export 'modules/module/credit-card-form.dart';
-export 'modules/module/detail-page.dart';
-export 'modules/module/home-page.dart';
-export 'modules/module/news-page.dart';
-export 'modules/module/qr-scanner-page.dart';
+export 'modules/module/resident_details_page.dart';
+export 'modules/module/home_page.dart';
+export 'modules/module/news_page.dart';
+export 'modules/module/qr_scanner_page.dart';
 export 'modules/module/webView-page.dart';
 export 'service/api-service.dart';
 export 'service/service-locator.dart';

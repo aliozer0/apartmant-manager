@@ -4,15 +4,16 @@ import 'package:http/http.dart' as http;
 import '../../global/index.dart';
 
 class ExpensesService {
-  BehaviorSubject<List<IncomeAndExpensesModel>?> incomeAndExpensesList$ = BehaviorSubject.seeded(null);
+  BehaviorSubject<List<IncomeAndExpensesModel>?> incomeAndExpensesList$ =
+      BehaviorSubject.seeded(null);
 
-  Future<RequestResponse?> incomeAndExpenses(int hotelId) async {
+  Future<RequestResponse?> incomeAndExpenses(String apartmentUid) async {
     try {
       var response = await http.post(Uri.parse(GlobalConfig.url),
           body: json.encode({
             "Action": "Execute",
             "Object": "SP_MOBILE_APARTMENT_MONTHLY_EXPENSE",
-            "Parameters": {"HOTELID": hotelId}
+            "Parameters": {"APARTMENTUID": apartmentUid}
           }));
       if (response.statusCode == 200) {
         var data = json.decode(utf8.decode(response.bodyBytes));
@@ -20,7 +21,8 @@ class ExpensesService {
         List<IncomeAndExpensesModel> incomeAndExpenses = [];
 
         data[0].forEach((item) {
-          IncomeAndExpensesModel incomeAndExpensesModel = IncomeAndExpensesModel.fromJson(item);
+          IncomeAndExpensesModel incomeAndExpensesModel =
+              IncomeAndExpensesModel.fromJson(item);
           incomeAndExpenses.add(incomeAndExpensesModel);
         });
         incomeAndExpensesList$.add(incomeAndExpenses);

@@ -5,12 +5,14 @@ class RequestResponse {
   bool result;
   String? resultResponse;
 
-  RequestResponse({required this.message, required this.result, this.resultResponse});
+  RequestResponse(
+      {required this.message, required this.result, this.resultResponse});
 }
 
 class Apartment {
   final int? id;
-  final int? hotelId;
+  final int? apartmentId;
+  final String? apartmentUid;
   final String? name;
   final String? blockName;
   final String? flatNumber;
@@ -30,7 +32,8 @@ class Apartment {
 
   Apartment({
     this.id,
-    this.hotelId,
+    this.apartmentId,
+    this.apartmentUid,
     this.name,
     this.blockName,
     this.flatNumber,
@@ -53,7 +56,9 @@ class Apartment {
     return Apartment(
       id: json['ID'],
       // nullable
-      hotelId: json['HOTELID'],
+      apartmentId: json['APARTMENTID'],
+      // nullable
+      apartmentUid: json['APARTMENTUID'],
       // nullable
       name: json['NAME'],
       // nullable
@@ -75,7 +80,8 @@ class Apartment {
       // nullable
       ownerPhone: json['OWNERPHONE'],
       // nullable
-      balance: json['BALANCE'] != null ? (json['BALANCE'] as num).toDouble() : null,
+      balance:
+          json['BALANCE'] != null ? (json['BALANCE'] as num).toDouble() : null,
       // nullable
       startDate: json['STARTDATE'],
       // nullable
@@ -160,7 +166,8 @@ class News {
 }
 
 class PaymentModel {
-  final BehaviorSubject<Map<String, dynamic>> formData$ = BehaviorSubject<Map<String, dynamic>>.seeded({
+  final BehaviorSubject<Map<String, dynamic>> formData$ =
+      BehaviorSubject<Map<String, dynamic>>.seeded({
     'pan': '',
     'expiryMonth': '',
     'expiryYear': '',

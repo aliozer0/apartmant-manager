@@ -4,145 +4,446 @@ import 'package:apartmantmanager/modules/expenses/expenses-model.dart';
 import 'package:flutter/material.dart';
 
 class Expenses extends StatefulWidget {
-  const Expenses({super.key, required this.hotelId});
+  final String apartmentUid;
 
-  final int hotelId;
+  const Expenses({
+    super.key,
+    required this.apartmentUid,
+  });
 
   @override
   State<Expenses> createState() => _ExpensesState();
 }
 
-class _ExpensesState extends State<Expenses> with SingleTickerProviderStateMixin {
-  final service = GetIt.I<ExpensesService>();
-  late TabController tabController;
-  BehaviorSubject<double> totalAmount$ = BehaviorSubject.seeded(0);
+class _ExpensesState extends State<Expenses>
+    with SingleTickerProviderStateMixin {
+  final _service = GetIt.I<ExpensesService>();
+  late final TabController _tabController;
+  final _totalAmount$ = BehaviorSubject<double>.seeded(0);
+  bool _isLoading = true;
+  String? _error;
 
   @override
   void initState() {
-    tabController = TabController(length: 3, vsync: this);
-    tabController.addListener(_onTabChanged);
-
-    service.incomeAndExpenses(widget.hotelId);
     super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+    _tabController.addListener(_onTabChanged);
+    _initializeData();
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    _totalAmount$.close();
+    super.dispose();
+  }
+
+  Future<void> _initializeData() async {
+    try {
+      setState(() => _isLoading = true);
+      await _service.incomeAndExpenses(widget.apartmentUid);
+      _calculateTotalAmount();
+    } catch (e) {
+      setState(() => _error = e.toString());
+      debugPrint('Error fetching expenses: $e');
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
   }
 
   void _onTabChanged() {
-    double totalAmount = 0;
+    _calculateTotalAmount();
+  }
+
+  void _calculateTotalAmount() {
+    if (_service.incomeAndExpensesList$.value == null) return;
+
     List<IncomeAndExpensesModel> filteredList = [];
-
-    switch (tabController.index) {
+    switch (_tabController.index) {
       case 0:
-        filteredList = service.incomeAndExpensesList$.value!;
-        break;
-      case 1: // Income Tab
-        filteredList = service.incomeAndExpensesList$.value!.where((item) => item.typeid == 1).toList();
-        break;
-      case 2: // Expenses Tab
-        filteredList = service.incomeAndExpensesList$.value!.where((item) => item.typeid == -1).toList();
-        break;
+        filteredList = _service.incomeAndExpensesList$.value!;
+      case 1:
+        filteredList = _service.incomeAndExpensesList$.value!
+            .where((item) => item.typeid == 1)
+            .toList();
+      case 2:
+        filteredList = _service.incomeAndExpensesList$.value!
+            .where((item) => item.typeid == -1)
+            .toList();
     }
 
-    totalAmount = filteredList.fold(0, (previousValue, element) => previousValue + (element.amount ?? 0));
+    final totalAmount = filteredList.fold(
+      0.0,
+      (prev, item) => prev + (item.amount ?? 0),
+    );
 
-    if (totalAmount < 0) {
-      totalAmount$.add(-totalAmount);
-    } else {
-      totalAmount$.add(totalAmount);
-    }
+    _totalAmount$.add(totalAmount.abs());
   }
 
   @override
   Widget build(BuildContext context) {
-    double W = MediaQuery.of(context).size.width;
-    return StreamBuilder(
-        stream: service.incomeAndExpensesList$.stream,
-        builder: (context, snapshot) {
-          if (service.incomeAndExpensesList$.value == null) return const Center(child: CircularProgressIndicator());
-
-          if (totalAmount$.value == 0) {
-            double totalAmount = service.incomeAndExpensesList$.value!.fold(0, (previousValue, element) => previousValue + (element.amount ?? 0));
-            totalAmount$.add(totalAmount);
-          }
-          return DefaultTabController(
-              length: 3,
-              initialIndex: 0,
-              child: Scaffold(
-                  appBar: AppBar(
-                      title: Text('Income & Expenses'.tr()),
-                      bottom: TabBar(
-                          isScrollable: false,
-                          labelStyle: k25Gilroy(context),
-                          unselectedLabelStyle: k25Gilroy(context).copyWith(color: Colors.white),
-                          indicator: const BoxDecoration(
-                              borderRadius: BorderRadius.only(topRight: Radius.circular(10), topLeft: Radius.circular(10)), color: Colors.white),
-                          controller: tabController,
-                          tabs: [Tab(text: 'All'.tr()), Tab(text: 'Income'.tr()), Tab(text: 'Expenses'.tr())]),
-                      leading: InkWell(child: const Icon(Icons.arrow_back_ios, color: Colors.white), onTap: () => Navigator.pop(context))),
-                  body: Column(
-                    children: [
-                      Expanded(
-                          child: TabBarView(controller: tabController, children: [
-                        incomeItem(service.incomeAndExpensesList$.value ?? [], "All", context),
-                        incomeItem(service.incomeAndExpensesList$.value?.where((item) => item.typeid == 1).toList() ?? [], "Income", context),
-                        incomeItem(service.incomeAndExpensesList$.value?.where((item) => item.typeid == -1).toList() ?? [], "Expenses", context)
-                      ])),
-                      StreamBuilder(
-                          stream: totalAmount$,
-                          builder: (context, snapshot) {
-                            String displayAmount = "${totalAmount$.value ?? 0} TL";
-                            if (totalAmount$.value < 0) {
-                              displayAmount = "-${totalAmount$.value.abs()} TL";
-                            }
-                            if (totalAmount$.value == 0) {
-                              return const SizedBox.shrink();
-                            }
-                            return Container(
-                                margin: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom, top: 10, left: 10, right: 10),
-                                padding: paddingAll10,
-                                decoration: BoxDecoration(color: GlobalConfig.primaryColor, borderRadius: borderRadius10),
-                                width: W,
-                                child: Row(children: [
-                                  Expanded(child: Text('Total Amount'.tr(), style: k25Gilroy(context).copyWith(color: Colors.white, fontSize: 20))),
-                                  Text(displayAmount, style: k25Gilroy(context).copyWith(color: Colors.white, fontSize: 20))
-                                ]));
-                          })
-                    ],
-                  )));
-        });
+    return Scaffold(
+      appBar: _buildAppBar(),
+      body: _buildBody(),
+    );
   }
-}
 
-Widget incomeItem(List<IncomeAndExpensesModel> items, String tabName, BuildContext context) {
-  if (items.isEmpty) {
-    return Center(child: Text('No data available for $tabName'.tr(), style: k22Gilroy(context).copyWith(fontSize: 18, color: Colors.grey)));
+  PreferredSizeWidget _buildAppBar() {
+    return AppBar(
+      title: Text(
+        'Income & Expenses'.tr(),
+        style: AppTextStyles.cardTitle.copyWith(
+          color: Colors.white,
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+        onPressed: () => Navigator.pop(context),
+      ),
+      bottom: TabBar(
+        controller: _tabController,
+        isScrollable: false,
+        labelStyle: AppTextStyles.cardTitle.copyWith(
+          fontWeight: FontWeight.w600,
+        ),
+        unselectedLabelStyle: AppTextStyles.cardTitle.copyWith(
+          color: Colors.white.withOpacity(0.8),
+        ),
+        indicator: const BoxDecoration(
+          borderRadius: BorderRadius.only(
+            topRight: Radius.circular(10),
+            topLeft: Radius.circular(10),
+          ),
+          color: Colors.white,
+        ),
+        tabs: [
+          Tab(text: 'All'.tr()),
+          Tab(text: 'Income'.tr()),
+          Tab(text: 'Expenses'.tr()),
+        ],
+      ),
+    );
   }
-  return ListView.builder(
-    itemCount: items.length,
-    itemBuilder: (context, index) {
-      final item = items[index];
-      return Container(
-          padding: paddingAll5,
-          margin: marginAll5,
+
+  Widget _buildBody() {
+    if (_isLoading) {
+      return Center(
+        child: CircularProgressIndicator(
+          color: GlobalConfig.primaryColor,
+        ),
+      );
+    }
+
+    if (_error != null) {
+      return _buildErrorView();
+    }
+
+    return StreamBuilder<List<IncomeAndExpensesModel>?>(
+      stream: _service.incomeAndExpensesList$.stream,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData || snapshot.data == null) {
+          return _buildEmptyView();
+        }
+
+        return Column(
+          children: [
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  _buildExpensesList(snapshot.data!, "All"),
+                  _buildExpensesList(
+                    snapshot.data!.where((item) => item.typeid == 1).toList(),
+                    "Income",
+                  ),
+                  _buildExpensesList(
+                    snapshot.data!.where((item) => item.typeid == -1).toList(),
+                    "Expenses",
+                  ),
+                ],
+              ),
+            ),
+            _buildTotalAmount(),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildErrorView() {
+    return RefreshIndicator(
+      onRefresh: _initializeData,
+      color: GlobalConfig.primaryColor,
+      child: ListView(
+        children: [
+          SizedBox(height: MediaQuery.of(context).size.height * 0.3),
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.error_outline,
+                  size: 48,
+                  color: Colors.red[300],
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Error loading data'.tr(),
+                  style: AppTextStyles.cardTitle,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Pull to refresh'.tr(),
+                  style: AppTextStyles.bodyText.copyWith(
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyView() {
+    return RefreshIndicator(
+      onRefresh: _initializeData,
+      color: GlobalConfig.primaryColor,
+      child: ListView(
+        children: [
+          SizedBox(height: MediaQuery.of(context).size.height * 0.3),
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.account_balance_wallet_outlined,
+                  size: 48,
+                  color: Colors.grey[400],
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'No transactions found'.tr(),
+                  style: AppTextStyles.cardTitle,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Pull to refresh'.tr(),
+                  style: AppTextStyles.bodyText.copyWith(
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildExpensesList(
+      List<IncomeAndExpensesModel> items, String tabName) {
+    if (items.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 48,
+              color: Colors.grey[500],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'No data available for $tabName'.tr(),
+              style: AppTextStyles.cardTitle.copyWith(
+                fontSize: 16,
+                color: Colors.grey[500],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return RefreshIndicator(
+      onRefresh: _initializeData,
+      color: GlobalConfig.primaryColor,
+      child: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: items.length,
+        itemBuilder: (context, index) => _buildExpenseCard(items[index]),
+      ),
+    );
+  }
+
+  Widget _buildExpenseCard(IncomeAndExpensesModel item) {
+    final bool isIncome = item.typeid == 1;
+    final incomeColor = isIncome ? Colors.green : Colors.red;
+
+    //details page ile aynı tasarım olacak
+    return Card(
+      margin: const EdgeInsets.only(bottom: 8),
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+        title: Text(
+          item.description ?? '',
+          style: AppTextStyles.cardTitle.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        subtitle: Padding(
+          padding: const EdgeInsets.only(top: 8),
+          child: Text(
+            DateFormat('dd.MM.yyyy').format(item.date ?? DateTime.now()),
+            style: AppTextStyles.bodyText.copyWith(
+              color: Colors.grey[600],
+            ),
+          ),
+        ),
+        trailing: Container(
+          padding: const EdgeInsets.symmetric(
+            vertical: 6,
+          ),
           decoration: BoxDecoration(
-              borderRadius: borderRadius10,
-              color: Colors.white,
-              boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.3), spreadRadius: 1, blurRadius: 5, offset: const Offset(0, 3))]),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
-            if (item.description != null) Padding(padding: const EdgeInsets.all(8.0), child: Text(item.description ?? '', style: k22Gilroy(context))),
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              if (item.amount != null)
+            color: Colors.grey.withAlpha(0),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Text(
+            "₺${item.amount?.toStringAsFixed(2)}",
+            style: AppTextStyles.cardTitle.copyWith(
+              color: incomeColor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Card tempExpenseCard(
+      IncomeAndExpensesModel item, MaterialColor color, bool isIncome) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
                 Expanded(
-                    child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                        child: Text(
-                          "${item.typeid == -1 ? '-' : ''} ${item.amount} TL",
-                          style: k22Gilroy(context).copyWith(
-                            color: item.typeid == 1 ? Colors.green : Colors.red,
-                          ),
-                        ))),
-              if (item.date != null) Text(DateFormat('dd.MM.yyyy').format(item.date!), style: k22Gilroy(context))
-            ])
-          ]));
-    },
-  );
+                  child: Text(
+                    item.description ?? '',
+                    style: AppTextStyles.cardTitle.copyWith(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: color.withAlpha(50),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    "${isIncome ? '+' : '-'}₺${item.amount?.toStringAsFixed(2)}",
+                    style: AppTextStyles.cardTitle.copyWith(
+                      color: color,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Icon(
+                  Icons.calendar_today,
+                  size: 14,
+                  color: Colors.grey[600],
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  DateFormat('dd.MM.yyyy').format(item.date ?? DateTime.now()),
+                  style: AppTextStyles.bodyText.copyWith(
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTotalAmount() {
+    return StreamBuilder<double>(
+      stream: _totalAmount$.stream,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData || snapshot.data == 0) {
+          return const SizedBox.shrink();
+        }
+
+        final amount = snapshot.data!;
+        final isNegative = _tabController.index == 2;
+        final displayAmount =
+            "${isNegative ? '-' : ''}₺${amount.toStringAsFixed(2)}";
+
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+          decoration: BoxDecoration(
+            color: GlobalConfig.primaryColor,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(25),
+                blurRadius: 10,
+                offset: const Offset(0, -5),
+              ),
+            ],
+          ),
+          child: SafeArea(
+            child: Row(
+              children: [
+                Text(
+                  'Total Amount'.tr(),
+                  style: AppTextStyles.cardTitle.copyWith(
+                    color: Colors.white,
+                  ),
+                ),
+                const Spacer(),
+                Text(
+                  displayAmount,
+                  style: AppTextStyles.cardTitle.copyWith(
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 }

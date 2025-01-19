@@ -9,7 +9,8 @@ class CreditCardFormScreen extends StatefulWidget {
   final List<Fee> fees;
   final Apartment apartment;
 
-  CreditCardFormScreen({super.key, required this.apartment, required this.fees});
+  CreditCardFormScreen(
+      {super.key, required this.apartment, required this.fees});
 
   @override
   _CreditCardFormScreenState createState() => _CreditCardFormScreenState();
@@ -40,7 +41,8 @@ class _CreditCardFormScreenState extends State<CreditCardFormScreen> {
             description: '',
             paymentAmount: 0.0,
             feeUid: ''));
-    paymentModel.updateData('paymentAmount', fetchedFee.feeAmount.toStringAsFixed(2));
+    paymentModel.updateData(
+        'paymentAmount', fetchedFee.feeAmount.toStringAsFixed(2));
     paymentModel.formData$.value['feeUid'] = fetchedFee.feeUid;
   }
 
@@ -56,7 +58,7 @@ class _CreditCardFormScreenState extends State<CreditCardFormScreen> {
     Map<String, dynamic> formData,
   ) async {
     final paymentData = {
-      "hotelId": widget.apartment.hotelId,
+      "apartmentUid": widget.apartment.apartmentUid,
       "feeUid": formData['feeUid'],
       "firstName": formData['firstName'],
       "lastName": formData['lastName'],
@@ -69,7 +71,8 @@ class _CreditCardFormScreenState extends State<CreditCardFormScreen> {
       "bank": formData['bank'],
       "redirectMode": "backend",
       "hashData": generateHashData(formData),
-      "selectedInstallments": '{"installment":"${formData['selectedInstallments']}","finalPrice":"${formData['paymentAmount']}"}',
+      "selectedInstallments":
+          '{"installment":"${formData['selectedInstallments']}","finalPrice":"${formData['paymentAmount']}"}',
       "isTest": true,
     };
 
@@ -85,8 +88,12 @@ class _CreditCardFormScreenState extends State<CreditCardFormScreen> {
 
         return responseData;
       } else {
-        debugPrint('?deme i?leme ba?ar?s?z oldu. Durum Kodu: ${response.statusCode}');
-        return {"error": '?deme i?leme ba?ar?s?z oldu. Durum Kodu: ${response.statusCode}'};
+        debugPrint(
+            '?deme i?leme ba?ar?s?z oldu. Durum Kodu: ${response.statusCode}');
+        return {
+          "error":
+              '?deme i?leme ba?ar?s?z oldu. Durum Kodu: ${response.statusCode}'
+        };
       }
     } catch (e) {
       debugPrint('?deme i?leme hatas?: $e');
@@ -117,16 +124,28 @@ class _CreditCardFormScreenState extends State<CreditCardFormScreen> {
           final bankData = bankInfo['data'];
           final bankConfig = bankData['bankConfig'];
           paymentModel.updateData('bank', bankData['bankName'] ?? '');
-          paymentModel.updateData('currencyOptions', bankConfig['currency'] != null ? List<String>.from(bankConfig['currency']) : []);
-          paymentModel.updateData('installmentOptions', bankConfig['installment'] != null ? List<String>.from(bankConfig['installment']) : []);
           paymentModel.updateData(
-              'currency', paymentModel.formData$.value['currencyOptions'].isNotEmpty ? paymentModel.formData$.value['currencyOptions'][0] : '');
+              'currencyOptions',
+              bankConfig['currency'] != null
+                  ? List<String>.from(bankConfig['currency'])
+                  : []);
+          paymentModel.updateData(
+              'installmentOptions',
+              bankConfig['installment'] != null
+                  ? List<String>.from(bankConfig['installment'])
+                  : []);
+          paymentModel.updateData(
+              'currency',
+              paymentModel.formData$.value['currencyOptions'].isNotEmpty
+                  ? paymentModel.formData$.value['currencyOptions'][0]
+                  : '');
         } else {
           debugPrint('Bank bilgisi al?namad? veya ba?ar? durumu false d?nd?.');
         }
       } else {
         final errorData = jsonDecode(response.body);
-        debugPrint('BIN bilgileri al?namad?. Kod: ${response.statusCode}, Hata: ${errorData['error']}');
+        debugPrint(
+            'BIN bilgileri al?namad?. Kod: ${response.statusCode}, Hata: ${errorData['error']}');
       }
     } catch (e) {
       debugPrint('Hata: $e');
@@ -160,7 +179,8 @@ class _CreditCardFormScreenState extends State<CreditCardFormScreen> {
                   child: Text(
                     "KRED? KARTI B?LG?LER?",
                     textAlign: TextAlign.center,
-                    style: normalTextStyle.copyWith(color: appText, fontSize: 20),
+                    style:
+                        normalTextStyle.copyWith(color: appText, fontSize: 20),
                   ),
                 ),
                 const SizedBox(width: 48),
@@ -174,7 +194,9 @@ class _CreditCardFormScreenState extends State<CreditCardFormScreen> {
                 stream: paymentModel.formData$.stream,
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
-                    return Text('Loading...', style: k25Trajan(context).copyWith(color: appText, fontSize: 20));
+                    return Text('Loading...',
+                        style: k25Trajan(context)
+                            .copyWith(color: appText, fontSize: 20));
                   }
                   final formData = paymentModel.formData$.value;
                   return Column(
@@ -197,7 +219,8 @@ class _CreditCardFormScreenState extends State<CreditCardFormScreen> {
                           child: Column(
                             children: [
                               Container(
-                                margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                margin: EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 10),
                                 child: TextFormField(
                                   decoration: InputDecoration(
                                     border: border,
@@ -218,7 +241,8 @@ class _CreditCardFormScreenState extends State<CreditCardFormScreen> {
                                 ),
                               ),
                               Container(
-                                margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                margin: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 10),
                                 child: TextFormField(
                                   decoration: InputDecoration(
                                     border: border,
@@ -231,8 +255,10 @@ class _CreditCardFormScreenState extends State<CreditCardFormScreen> {
                                   ),
                                   onChanged: (value) {
                                     final names = value.split(' ');
-                                    paymentModel.updateData('firstName', names[0]);
-                                    paymentModel.updateData('lastName', names.length > 1 ? names[1] : '');
+                                    paymentModel.updateData(
+                                        'firstName', names[0]);
+                                    paymentModel.updateData('lastName',
+                                        names.length > 1 ? names[1] : '');
                                   },
                                 ),
                               ),
@@ -240,7 +266,8 @@ class _CreditCardFormScreenState extends State<CreditCardFormScreen> {
                                 children: [
                                   Expanded(
                                     child: Container(
-                                      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                      margin: const EdgeInsets.symmetric(
+                                          horizontal: 10, vertical: 10),
                                       child: TextFormField(
                                         decoration: InputDecoration(
                                           border: border,
@@ -255,8 +282,10 @@ class _CreditCardFormScreenState extends State<CreditCardFormScreen> {
                                         onChanged: (value) {
                                           final parts = value.split('/');
                                           if (parts.length == 2) {
-                                            paymentModel.updateData('expiryMonth', parts[0]);
-                                            paymentModel.updateData('expiryYear', parts[1]);
+                                            paymentModel.updateData(
+                                                'expiryMonth', parts[0]);
+                                            paymentModel.updateData(
+                                                'expiryYear', parts[1]);
                                           }
                                         },
                                       ),
@@ -264,15 +293,18 @@ class _CreditCardFormScreenState extends State<CreditCardFormScreen> {
                                   ),
                                   Expanded(
                                     child: Container(
-                                      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                      margin: const EdgeInsets.symmetric(
+                                          horizontal: 10, vertical: 10),
                                       child: Focus(
                                         onFocusChange: (isFocused) {
-                                          paymentModel.updateData('isCvvFocused', isFocused);
+                                          paymentModel.updateData(
+                                              'isCvvFocused', isFocused);
                                         },
                                         child: TextFormField(
                                           decoration: InputDecoration(
                                             border: border,
-                                            labelStyle: normalTextStyle.copyWith(
+                                            labelStyle:
+                                                normalTextStyle.copyWith(
                                               color: GlobalConfig.primaryColor,
                                             ),
                                             labelText: 'CVV',
@@ -280,10 +312,12 @@ class _CreditCardFormScreenState extends State<CreditCardFormScreen> {
                                             focusedBorder: focusBorder,
                                           ),
                                           obscureText: true,
-                                          cursorColor: GlobalConfig.primaryColor,
+                                          cursorColor:
+                                              GlobalConfig.primaryColor,
                                           keyboardType: TextInputType.number,
                                           onChanged: (value) {
-                                            paymentModel.updateData('cvv', value);
+                                            paymentModel.updateData(
+                                                'cvv', value);
                                           },
                                         ),
                                       ),
@@ -299,24 +333,34 @@ class _CreditCardFormScreenState extends State<CreditCardFormScreen> {
                                   children: [
                                     Expanded(
                                       child: Container(
-                                        margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 10, vertical: 10),
                                         child: DropdownButtonFormField<String>(
                                           decoration: InputDecoration(
                                             border: border,
-                                            labelStyle: normalTextStyle.copyWith(
+                                            labelStyle:
+                                                normalTextStyle.copyWith(
                                               color: GlobalConfig.primaryColor,
                                             ),
                                             labelText: 'Para Birimi',
                                             enabledBorder: enableBorder,
                                             focusedBorder: focusBorder,
                                           ),
-                                          value: paymentModel.formData$.value['currencyOptions'].contains(paymentModel.formData$.value['currency'])
-                                              ? paymentModel.formData$.value['currency']
+                                          value: paymentModel.formData$
+                                                  .value['currencyOptions']
+                                                  .contains(paymentModel
+                                                      .formData$
+                                                      .value['currency'])
+                                              ? paymentModel
+                                                  .formData$.value['currency']
                                               : null,
                                           onChanged: (String? newValue) {
-                                            paymentModel.updateData('cvv', newValue);
+                                            paymentModel.updateData(
+                                                'cvv', newValue);
                                           },
-                                          items: formData?['currencyOptions'].map<DropdownMenuItem<String>>((String value) {
+                                          items: formData?['currencyOptions']
+                                              .map<DropdownMenuItem<String>>(
+                                                  (String value) {
                                             return DropdownMenuItem<String>(
                                               value: value,
                                               child: Text(value),
@@ -327,11 +371,13 @@ class _CreditCardFormScreenState extends State<CreditCardFormScreen> {
                                     ),
                                     Expanded(
                                       child: Container(
-                                        margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 10, vertical: 10),
                                         child: TextFormField(
                                           decoration: InputDecoration(
                                             border: border,
-                                            labelStyle: normalTextStyle.copyWith(
+                                            labelStyle:
+                                                normalTextStyle.copyWith(
                                               color: GlobalConfig.primaryColor,
                                             ),
                                             labelText: 'Banka',
@@ -348,7 +394,8 @@ class _CreditCardFormScreenState extends State<CreditCardFormScreen> {
                               ],
                               if (formData?['installmentOptions'].isNotEmpty)
                                 Container(
-                                  margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 10),
                                   child: DropdownButtonFormField<String>(
                                     decoration: InputDecoration(
                                       border: border,
@@ -359,14 +406,23 @@ class _CreditCardFormScreenState extends State<CreditCardFormScreen> {
                                       enabledBorder: enableBorder,
                                       focusedBorder: focusBorder,
                                     ),
-                                    value: (paymentModel.formData$.value['selectedInstallments'] != null &&
-                                            paymentModel.formData$.value['selectedInstallments'].isNotEmpty)
-                                        ? paymentModel.formData$.value['selectedInstallments']
+                                    value: (paymentModel.formData$.value[
+                                                    'selectedInstallments'] !=
+                                                null &&
+                                            paymentModel
+                                                .formData$
+                                                .value['selectedInstallments']
+                                                .isNotEmpty)
+                                        ? paymentModel.formData$
+                                            .value['selectedInstallments']
                                         : null,
                                     onChanged: (String? newValue) {
-                                      paymentModel.updateData('selectedInstallments', newValue);
+                                      paymentModel.updateData(
+                                          'selectedInstallments', newValue);
                                     },
-                                    items: formData?['installmentOptions'].map<DropdownMenuItem<String>>((String value) {
+                                    items: formData?['installmentOptions']
+                                        .map<DropdownMenuItem<String>>(
+                                            (String value) {
                                       return DropdownMenuItem<String>(
                                         value: value,
                                         child: Text(value),
@@ -375,7 +431,8 @@ class _CreditCardFormScreenState extends State<CreditCardFormScreen> {
                                   ),
                                 ),
                               Container(
-                                margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                margin: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 10),
                                 child: TextFormField(
                                   decoration: InputDecoration(
                                     border: border,
@@ -388,17 +445,22 @@ class _CreditCardFormScreenState extends State<CreditCardFormScreen> {
                                   ),
                                   keyboardType: TextInputType.number,
                                   onChanged: (value) {
-                                    paymentModel.updateData('paymentAmount', value);
+                                    paymentModel.updateData(
+                                        'paymentAmount', value);
                                   },
                                 ),
                               ),
                               Container(
-                                margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                                decoration: BoxDecoration(color: GlobalConfig.primaryColor, borderRadius: borderRadius10),
+                                margin: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 10),
+                                decoration: BoxDecoration(
+                                    color: GlobalConfig.primaryColor,
+                                    borderRadius: borderRadius10),
                                 child: TextButton(
                                   onPressed: () async {
                                     if (formKey.currentState!.validate()) {
-                                      var paymentData = await sendPaymentData(paymentModel.formData$.value);
+                                      var paymentData = await sendPaymentData(
+                                          paymentModel.formData$.value);
 
                                       if (paymentData["error"] != null) {
                                         debugPrint(paymentData["error"]);
@@ -419,7 +481,8 @@ class _CreditCardFormScreenState extends State<CreditCardFormScreen> {
                                             // apiService.fetchFees(
                                             //     widget.apartment.id,
                                             //     widget.apartment.hotelId);
-                                          } else if (paymentResult[0] == false) {
+                                          } else if (paymentResult[0] ==
+                                              false) {
                                             debugPrint('?deme ba?ar?s?z.');
                                           }
                                         });
@@ -427,12 +490,15 @@ class _CreditCardFormScreenState extends State<CreditCardFormScreen> {
                                     }
                                   },
                                   style: TextButton.styleFrom(
-                                    minimumSize: const Size(double.infinity, 50),
-                                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                    minimumSize:
+                                        const Size(double.infinity, 50),
+                                    tapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
                                   ),
                                   child: Text(
                                     '?de',
-                                    style: k25Trajan(context).copyWith(color: appText, fontSize: 14),
+                                    style: k25Trajan(context)
+                                        .copyWith(color: appText, fontSize: 14),
                                   ),
                                 ),
                               )
