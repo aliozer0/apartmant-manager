@@ -67,10 +67,6 @@ class _DetailPageState extends State<DetailPage> {
     }
   }
 
-  double _getTotalFeeAmount() {
-    return widget.fees.fold(0.0, (sum, fee) => sum + fee.feeAmount);
-  }
-
   Widget _buildTopBackground() {
     return Container(
       height: 100,
