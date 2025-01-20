@@ -53,7 +53,7 @@ class QRScannerController {
         final isValidApartment = await _validateApartment(qrText);
         if (!isValidApartment) {
           _showError(
-              context, 'This apartment is not registered in our system.');
+              context, 'This apartment is not registered in our system.'.tr());
           _isProcessing = false;
           return;
         }
@@ -115,29 +115,64 @@ class QRScannerController {
     }
   }
 
-  void _showError(BuildContext context, String message) {
-    if (!context.mounted) return;
+  OverlayEntry? _currentErrorOverlay;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-        margin: const EdgeInsets.all(8),
-        content: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            const Icon(
-              Icons.warning,
+  void _showError(BuildContext context, String message) {
+    _currentErrorOverlay?.remove();
+
+    final overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        top: MediaQuery.of(context).padding.top + kToolbarHeight,
+        left: 0,
+        right: 0,
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: GlobalConfig.primaryColor,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
-            Text(
-              message,
-              style: AppTextStyles.bodyText.copyWith(color: Colors.white),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.error_outline,
+                  color: Colors.white,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    message,
+                    style: AppTextStyles.bodyText.copyWith(color: Colors.white),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close, color: Colors.white),
+                  onPressed: () {
+                    _currentErrorOverlay?.remove();
+                    _currentErrorOverlay = null;
+                  },
+                ),
+              ],
             ),
-          ],
+          ),
         ),
-        backgroundColor: GlobalConfig.primaryColor,
-        behavior: SnackBarBehavior.floating,
       ),
     );
+
+    _currentErrorOverlay = overlayEntry;
+    Overlay.of(context).insert(overlayEntry);
+
+    Future.delayed(const Duration(seconds: 5), () {
+      _currentErrorOverlay?.remove();
+      _currentErrorOverlay = null;
+    });
   }
 
   void togglePause() {
@@ -167,7 +202,6 @@ class QRScannerController {
     }
   }
 
-  @override
   void dispose() {
     _scanSubscription?.cancel();
     _qrController?.dispose();

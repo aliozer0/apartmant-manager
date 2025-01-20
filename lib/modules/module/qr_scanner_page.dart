@@ -14,7 +14,7 @@ class _QRScannerPageState extends State<QRScannerPage>
     with WidgetsBindingObserver {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   late QRScannerController _qrScannerController;
-  bool _isLoading = false;
+  final bool _isLoading = false;
 
   @override
   void initState() {
@@ -42,7 +42,7 @@ class _QRScannerPageState extends State<QRScannerPage>
   Widget _buildScannerOverlay() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.5),
+        color: Colors.black.withAlpha(25),
       ),
       child: Stack(
         children: [
@@ -86,7 +86,7 @@ class _QRScannerPageState extends State<QRScannerPage>
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withAlpha(25),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -114,7 +114,7 @@ class _QRScannerPageState extends State<QRScannerPage>
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withAlpha(25),
             blurRadius: 8,
             offset: const Offset(0, -2),
           ),
