@@ -46,5 +46,9 @@
   "No Description": "Açıklama Yok",
   "Home Owner": "Ev Sahibi",
   "Your payment has been made successfully.": "Ödemeniz başarıyla yapılmıştır.",
-  "Your payment was not processed. Please try again.": "Ödemeniz işlenmedi. Lütfen tekrar deneyin."
+  "Your payment was not processed. Please try again.": "Ödemeniz işlenmedi. Lütfen tekrar deneyin.",
+  "No data available for Expenses": "Giderler için veri mevcut değil",
+  "No data available for Income": "Gelirler için veri mevcut değil",
+  "No data available for All": "Gelirler ve Giderler için veri mevcut değil",
+  "This apartment is not registered in our system.": "Bu apartman sistemimizde kayıtlı değil."
 }

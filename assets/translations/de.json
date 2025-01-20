@@ -46,5 +46,9 @@
   "No Description": "Keine Beschreibung",
   "Home Owner": "Hausbesitzer",
   "Your payment has been made successfully.": "Ihre Zahlung wurde erfolgreich ausgeführt.",
-  "Your payment was not processed. Please try again.": "Ihre Zahlung wurde nicht bearbeitet. Bitte versuchen Sie es erneut."
+  "Your payment was not processed. Please try again.": "Ihre Zahlung wurde nicht bearbeitet. Bitte versuchen Sie es erneut.",
+  "No data available for Expenses": "Keine Daten verfügbar für Ausgaben",
+  "No data available for Income": "Keine Daten verfügbar für Einkommen",
+  "No data available for All": "Keine Daten verfügbar für Alle",
+  "This apartment is not registered in our system.": "Diese Wohnung ist nicht in unserem System registriert."
 }

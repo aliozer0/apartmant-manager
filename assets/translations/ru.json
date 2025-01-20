@@ -46,5 +46,9 @@
   "No Description": "Без описания",
   "Home Owner": "Владелец дома",
   "Your payment has been made successfully.": "Ваш платеж был успешно выполнен.",
-  "Your payment was not processed. Please try again.": "Ваш платеж не был обработан. Пожалуйста, попробуйте снова."
+  "Your payment was not processed. Please try again.": "Ваш платеж не был обработан. Пожалуйста, попробуйте снова.",
+  "No data available for Expenses": "Данные о расходах отсутствуют",
+  "No data available for Income": "Данные о доходах отсутствуют",
+  "No data available for All": "Данные о доходах и расходах отсутствуют",
+  "This apartment is not registered in our system.": "Эта квартира не зарегистрирована в нашей системе."
 }
