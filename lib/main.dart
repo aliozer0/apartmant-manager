@@ -1,27 +1,20 @@
 import 'dart:ui' as ui;
 
-import 'package:apartmantmanager/modules/module/home-page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'global/index.dart';
 import 'index.dart';
-import 'modules/module/qr-scanner-page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // setupLocator();
   GlobalFunction().getItInital();
-
   prefs = await SharedPreferences.getInstance();
-
-  hotelId = await PreferenceService.getHotelId();
-  apartmentName = await PreferenceService.getApartmentName();
-
-  if (hotelId == null || apartmentName == null) {
-    debugPrint('hotelId veya apartmentName null');
-  }
+  apartmentUid = await PreferenceService.getApartmentUid();
+  // if (hotelId == null || apartmentName == null) {
+  //   debugPrint('hotelId veya apartmentName null');
+  // }
   Future<String> initialAppLanguage() async {
     selectedlang = prefs.getString('selected_language');
 
@@ -87,6 +80,6 @@ class _MyAppState extends State<MyApp> {
           SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
           return child!;
         },
-        home: (hotelId == null || apartmentName == null) ? const QRScannerPage() : HomePage());
+        home: (apartmentUid == null) ? const QRScannerPage() : HomePage());
   }
 }

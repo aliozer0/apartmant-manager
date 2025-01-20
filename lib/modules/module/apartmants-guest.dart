@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:apartmantmanager/global/index.dart';
 import 'package:apartmantmanager/index.dart';
 import 'package:apartmantmanager/widgets/widgets.dart';
@@ -12,39 +14,93 @@ class ApartmantsGuest extends StatefulWidget {
 
 class _ApartmantsGuestState extends State<ApartmantsGuest> {
   final globalService = GetIt.I<GlobalService>();
+  final searchController = TextEditingController();
+  final BehaviorSubject<bool> isSearch$ = BehaviorSubject.seeded(false);
+  final BehaviorSubject<List<Apartment>?> filteredApartments$ = BehaviorSubject<List<Apartment>>();
 
   @override
   void initState() {
-    // globalService.fetchApartments(, hotelId)
     super.initState();
+    isLoading$.add(true);
+    globalService.fetchApartments().then((value) {
+      filteredApartments$.add(globalService.apartments$.value);
+    });
+    isLoading$.add(false);
+    searchController.addListener(() {
+      _filterApartments(searchController.text);
+    });
+  }
+
+  void _filterApartments(String query) {
+    final lowerCaseQuery = query.toLowerCase();
+
+    if (lowerCaseQuery.isEmpty) {
+      final originalList = globalService.apartments$.valueOrNull ?? [];
+      filteredApartments$.add(originalList);
+    } else {
+      final originalList = globalService.apartments$.valueOrNull ?? [];
+      final filteredList = originalList.where((apartment) {
+        final nameMatches = apartment.name?.toLowerCase().contains(lowerCaseQuery) ?? false;
+        final contactMatches = apartment.contactName?.toLowerCase().contains(lowerCaseQuery) ?? false;
+        return nameMatches || contactMatches;
+      }).toList();
+      filteredApartments$.add(filteredList);
+    }
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    filteredApartments$.close();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(title: Text('Apartment Guests'.tr())),
-        body: RefreshIndicator(
-          color: GlobalConfig.primaryColor,
-          onRefresh: () async {
-            await globalService.fetchApartments(apartmentName!, hotelId!);
-          },
-          child: StreamBuilder(
-              stream: globalService.apartments$.stream,
-              builder: (context, snapshot) {
-                if (globalService.apartments$.value == null) {
-                  return Center(child: CircularProgressIndicator(color: GlobalConfig.primaryColor));
-                } else if (globalService.apartments$.value!.isEmpty) {
-                  return Center(child: Text('No Apartment Found'.tr(), style: k19_5Gilroy(context)));
-                }
-
-                return SizedBox(
-                    height: MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top,
-                    child: ListView.builder(
-                      itemCount: globalService.apartments$.value?.length,
-                      itemBuilder: (context, index) => apartmentGuestItem(globalService.apartments$.value![index], context),
-                    ));
-              }),
-        ));
+    return StreamBuilder<bool>(
+        stream: isSearch$,
+        builder: (context, snapshot) {
+          return Scaffold(
+              appBar: AppBar(
+                  title: isSearch$.value
+                      ? TextField(
+                          controller: searchController,
+                          onChanged: (value) => _filterApartments(searchController.text),
+                          decoration: InputDecoration(hintText: 'Search Apartments Guest'.tr(), border: InputBorder.none),
+                          style: const TextStyle(color: Colors.white),
+                          cursorColor: Colors.white)
+                      : Text('Apartment Guests'.tr()),
+                  actions: [
+                    IconButton(
+                        icon: Icon(isSearch$.value ? Icons.close : Icons.search, color: Colors.white),
+                        onPressed: () {
+                          if (isSearch$.value) {
+                            searchController.clear();
+                          }
+                          isSearch$.add(!isSearch$.value);
+                        })
+                  ]),
+              body: isLoading$.value
+                  ? Center(child: CircularProgressIndicator(color: GlobalConfig.primaryColor))
+                  : RefreshIndicator(
+                      color: GlobalConfig.primaryColor,
+                      onRefresh: () => globalService.fetchApartments(),
+                      child: StreamBuilder(
+                          stream: filteredApartments$.stream,
+                          builder: (context, snapshot) {
+                            if (filteredApartments$.value == null) {
+                              return Center(child: CircularProgressIndicator(color: GlobalConfig.primaryColor));
+                            } else if (filteredApartments$.value!.isEmpty) {
+                              return Center(child: Text('No Apartment Found'.tr(), style: k19_5Gilroy(context)));
+                            }
+                            return SizedBox(
+                                height: MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top,
+                                child: ListView.builder(
+                                  itemCount: filteredApartments$.value?.length,
+                                  itemBuilder: (context, index) => apartmentGuestItem(filteredApartments$.value![index], context),
+                                ));
+                          })));
+        });
   }
 }
 
@@ -60,79 +116,51 @@ Widget apartmentGuestItem(Apartment apartment, BuildContext context) {
       child: InkWell(
           borderRadius: borderRadius10,
           onTap: () async {
-            final fees = await GetIt.I<GlobalService>().fetchFees(apartment.id!, apartment.hotelId!);
-            Navigator.push(context, RouteAnimation.createRoute(DetailPage(apartment: apartment, fees: fees), 1, 0));
+            Navigator.push(context, RouteAnimation.createRoute(DetailPage(apartment: apartment), 1, 0));
           },
-          child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Container(
-                width: W / 3.5,
-                padding: paddingAll5,
-                child: Column(children: [
-                  apartment.photoUrl != null
-                      ? CircleAvatar(backgroundImage: NetworkImage(apartment.photoUrl ?? ''), radius: 40)
-                      : Icon(Icons.account_circle, size: 80, color: Colors.grey[400]),
-                  Container(
-                      padding: const EdgeInsets.all(8.0),
-                      decoration: const BoxDecoration(shape: BoxShape.circle),
-                      child: Row(children: [
-                        Text(apartment.flatNumber.toString(), style: k25Trajan(context).copyWith(color: Colors.black)),
-                        const Icon(Icons.home, color: Colors.black)
-                      ]))
-                ])),
-            SizedBox(width: W / 50),
-            SizedBox(
-                width: W / 2,
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(apartment.contactName ?? '', style: k25Trajan(context), overflow: TextOverflow.ellipsis, softWrap: true, maxLines: 3),
-                  SizedBox(height: W / 40),
-                  IntrinsicHeight(
-                      child: Row(children: [
-                    if (apartment.numberOfPeople != null)
-                      Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
-                        const Icon(Icons.people, color: Colors.black, size: 25),
-                        const SizedBox(width: 10),
-                        Text(apartment.numberOfPeople.toString(), style: k25Trajan(context))
-                      ]),
-                    if (apartment.plateNo != null) VerticalDivider(color: Colors.grey[400], thickness: 1, width: 20),
-                    if (apartment.plateNo != null)
-                      Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
-                        const Icon(Icons.car_rental_outlined, color: Colors.black, size: 25),
-                        const SizedBox(width: 10),
-                        Text(apartment.plateNo!, style: k25Trajan(context).copyWith(fontSize: 18))
-                      ])
+          child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            Expanded(
+              child: Container(
+                  padding: paddingAll5,
+                  child: Column(children: [
+                    apartment.photoUrl != null
+                        ? CircleAvatar(backgroundImage: NetworkImage(apartment.photoUrl ?? ''), radius: 40)
+                        : Icon(Icons.account_circle, size: 80, color: Colors.grey[400]),
                   ])),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-                          if (apartment.phone != null)
-                            InkWell(child: const Icon(Icons.phone, color: Colors.white), onTap: () => makePhoneCall(apartment.phone!)),
-                          if (apartment.phone != null) SizedBox(width: W / 40),
-                          InkWell(
-                              onTap: () => sendEmail(apartment.email!),
-                              child: Container(
-                                  decoration: const BoxDecoration(color: Colors.blue, shape: BoxShape.circle),
-                                  padding: const EdgeInsets.all(6.0),
-                                  child: const Icon(Icons.email, color: Colors.white))),
-                          if (apartment.email != null) SizedBox(width: W / 40),
-                          if (apartment.phone != null)
-                            InkWell(
-                                child: Container(
-                                    decoration: const BoxDecoration(color: Colors.orange, shape: BoxShape.circle),
-                                    padding: const EdgeInsets.all(6.0),
-                                    child: const Icon(Icons.sms, color: Colors.white)),
-                                onTap: () => sendSMS(apartment.phone!))
-                        ]),
-                        SizedBox(width: W / 40),
-                        if (apartment.balance != null && apartment.balance != 0)
-                          Text('${apartment.balance} TL',
-                              style: k25Trajan(context).copyWith(color: Colors.red), overflow: TextOverflow.ellipsis, softWrap: true, maxLines: 3),
-                      ],
-                    ),
-                  )
-                ])),
+            ),
+            Expanded(
+              flex: 3,
+              child: SizedBox(
+                  height: W / 4,
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Expanded(child: Text(apartment.contactName ?? '', style: k25Trajan(context), overflow: TextOverflow.ellipsis, softWrap: true, maxLines: 3)),
+                    Text(apartment.blockName ?? '', style: k25Gilroy(context)),
+                    const Spacer(),
+                    Row(children: [
+                      if (apartment.phone == null)
+                        InkWell(
+                            child: Container(
+                                decoration: const BoxDecoration(color: Colors.green, shape: BoxShape.circle),
+                                padding: const EdgeInsets.all(6.0),
+                                child: const Icon(Icons.phone, color: Colors.white)),
+                            onTap: () => makePhoneCall(apartment.phone!)),
+                      SizedBox(width: W / 30),
+                      InkWell(
+                          onTap: () => sendEmail(apartment.email!),
+                          child: Container(
+                              decoration: const BoxDecoration(color: Colors.blue, shape: BoxShape.circle),
+                              padding: const EdgeInsets.all(6.0),
+                              child: const Icon(Icons.email, color: Colors.white))),
+                      SizedBox(width: W / 30),
+                      if (apartment.phone == null)
+                        InkWell(
+                            child: Container(
+                                decoration: const BoxDecoration(color: Colors.orange, shape: BoxShape.circle),
+                                padding: const EdgeInsets.all(6.0),
+                                child: const Icon(Icons.sms, color: Colors.white)))
+                    ])
+                  ])),
+            ),
           ])));
 }
 

@@ -15,12 +15,6 @@ class _HomePageState extends State<HomePage> {
   final globalService = GetIt.I<GlobalService>();
 
   @override
-  void initState() {
-    globalService.fetchApartments(apartmentName!, hotelId!);
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     double W = MediaQuery.of(context).size.width;
 
@@ -32,18 +26,17 @@ class _HomePageState extends State<HomePage> {
                   padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
                   child: Column(children: [
                     Padding(
-                      padding: paddingAll10,
-                      child: Container(
-                          width: W,
-                          padding: paddingAll10,
-                          decoration: BoxDecoration(color: GlobalConfig.primaryColor, borderRadius: BorderRadius.circular(10)),
-                          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                            Text("Welcome!".tr(), style: k20_5Trajan(context).copyWith(color: Colors.white)),
-                            SizedBox(height: W / 40),
-                            if (globalService.apartments$.value?.first.name != null)
-                              Text("${globalService.apartments$.value?.first.name} $apartmentName", style: k23Gilroy(context).copyWith(color: Colors.white))
-                          ])),
-                    ),
+                        padding: paddingAll10,
+                        child: Container(
+                            width: W,
+                            padding: paddingAll10,
+                            decoration: BoxDecoration(color: GlobalConfig.primaryColor, borderRadius: BorderRadius.circular(10)),
+                            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                              Text("Welcome!".tr(), style: k20_5Trajan(context).copyWith(color: Colors.white)),
+                              SizedBox(height: W / 40),
+                              if (globalService.apartments$.value?.first.name != null)
+                                Text("${globalService.apartments$.value?.first.name} $apartmentName", style: k23Gilroy(context).copyWith(color: Colors.white))
+                            ]))),
                     Wrap(children: [
                       homeItem(
                           title: "Apartment Guests".tr(),
@@ -58,7 +51,7 @@ class _HomePageState extends State<HomePage> {
                           imageAsset: "assets/icons/income.png",
                           color: Colors.green,
                           W: W,
-                          onTap: () => Navigator.push(context, RouteAnimation.createRoute(Expenses(hotelId: hotelId!), 1, 0))),
+                          onTap: () => Navigator.push(context, RouteAnimation.createRoute(const Expenses(), 1, 0))),
                       homeItem(
                           title: "Announcements".tr(),
                           imageAsset: "assets/icons/notifications.png",
@@ -70,13 +63,7 @@ class _HomePageState extends State<HomePage> {
         });
   }
 
-  Widget homeItem({
-    required String title,
-    required String imageAsset,
-    required Color color,
-    required double W,
-    required Function() onTap,
-  }) {
+  Widget homeItem({required String title, required String imageAsset, required Color color, required double W, required Function() onTap}) {
     return InkWell(
         onTap: onTap,
         child: Container(

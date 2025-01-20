@@ -15,24 +15,27 @@ class QRScannerController {
   void onQRViewCreated(QRViewController controller, BuildContext context) async {
     qrController = controller;
     controller.scannedDataStream.listen((scanData) async {
-      String qrText = scanData.code ?? '';
+      apartmentUid = scanData.code ?? '';
 
-      List<String> splitData = qrText.split(",");
-      if (splitData.length == 2) {
-        int? hotelId = int.tryParse(splitData[0]);
-        String blockName = splitData[1];
-        debugPrint('Hotel ID: $hotelId, Block Name: $blockName');
+      // int? hotelId = int.tryParse(splitData[0]);
+      // String blockName = splitData[1];
+      // debugPrint('Hotel ID: $hotelId, Block Name: $blockName');
 
-        if (hotelId != null) {
-          blockName$.add(blockName);
-          hotelId$.add(hotelId);
-          await PreferenceService.setHotelId(hotelId);
-          await PreferenceService.setApartmentName(blockName);
-
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
-        }
-      } else {
-        debugPrint('QR code format is incorrect: $qrText');
+      if (apartmentUid != null) {
+        await PreferenceService.setApartmentUid(apartmentUid!);
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
+      }
+      // if (hotelId != null) {
+      //   blockName$.add(blockName);
+      //   hotelId$.add(hotelId);
+      //   // await PreferenceService.setHotelId(hotelId);
+      //   //
+      //   // await PreferenceService.setApartmentName(blockName);
+      //
+      //
+      // }
+      else {
+        debugPrint('QR code format is incorrect: $apartmentUid');
       }
     });
   }

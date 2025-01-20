@@ -4,6 +4,7 @@ import 'index.dart';
 
 String? selectedlang;
 int? hotelId;
+String? apartmentUid;
 
 String? apartmentName;
 BehaviorSubject<bool> isLoading$ = BehaviorSubject.seeded(false);

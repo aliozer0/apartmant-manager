@@ -5,96 +5,73 @@ import '../../index.dart';
 
 class DetailPage extends StatefulWidget {
   final Apartment apartment;
-  final List<Fee> fees;
 
-  DetailPage({required this.apartment, required this.fees});
+  DetailPage({required this.apartment});
 
   @override
   _DetailPageState createState() => _DetailPageState();
 }
 
 class _DetailPageState extends State<DetailPage> {
-  final apiService = GetIt.I<GlobalService>();
+  final globalService = GetIt.I<GlobalService>();
 
   @override
   void initState() {
+    globalService.fetchFees(widget.apartment.id!);
     super.initState();
-    fetchData();
   }
 
-  Future<void> fetchData() async {
-    await apiService.fetchApartments(widget.apartment.blockName!, widget.apartment.hotelId!);
-    final apartments = await apiService.apartments$.first;
-    if (apartments != null && apartments.isNotEmpty) {
-      await apiService.fetchFees(apartments.first.id!, apartments.first.hotelId!);
-    }
-  }
-
-  Future<void> refreshPage() async {
-    await fetchData();
-  }
-
-  String formatDate(String date) {
-    final parsedDate = DateTime.parse(date);
-    return DateFormat('dd.MM.yyyy').format(parsedDate);
-  }
-
-  double getTotalFeeAmount(List<Fee> fees) {
-    return fees.fold(0.0, (sum, fee) => sum + (fee.feeAmount ?? 0.0));
-  }
+  // Future<void> fetchData() async {
+  //   await globalService.fetchApartments();
+  //   final apartments = await globalService.apartments$.first;
+  //   if (apartments != null && apartments.isNotEmpty) {
+  //     await globalService.fetchFees(apartments.first.id!);
+  //   }
+  // }
+  //
+  // Future<void> refreshPage() async {
+  //   await fetchData();
+  // }
+  //
+  // String formatDate(String date) {
+  //   final parsedDate = DateTime.parse(date);
+  //   return DateFormat('dd.MM.yyyy').format(parsedDate);
+  // }
+  //
+  // double getTotalFeeAmount(List<Fee> fees) {
+  //   return fees.fold(0.0, (sum, fee) => sum + (fee.feeAmount ?? 0.0));
+  // }
 
   @override
   Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-    final topPadding = mediaQuery.padding.top;
-    final apartmentBalance = widget.apartment.balance;
-
+    double W = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Apartment Details'.tr()),
-      ),
-      body: RefreshIndicator(
-        onRefresh: refreshPage,
-        color: GlobalConfig.primaryColor,
-        backgroundColor: background,
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: Column(
-            children: [
+        appBar: AppBar(title: Text('Apartment Details'.tr())),
+        body: RefreshIndicator(
+            onRefresh: () => globalService.fetchFees(widget.apartment.id!),
+            color: GlobalConfig.primaryColor,
+            child: Column(children: [
               ProfileCard(apartment: widget.apartment),
-            ],
-          ),
-          // child: StreamBuilder(
-          //   stream: Rx.combineLatest2(apiService.fees$, apiService.apartments$, (a, b) => null),
-          //   builder: (context, snapshot) {
-          //
-          //
-          //
-          //
-          //
-          //     // if (snapshot.connectionState == ConnectionState.waiting) {
-          //     //   return Center(
-          //     //     child: CircularProgressIndicator(color: GlobalConfig.primaryColor),
-          //     //   );
-          //     // } else if (!snapshot.hasData || snapshot.data!.item1 == null || snapshot.data!.item1!.isEmpty) {
-          //     //   return const Center(child: Text('No apartments found.'));
-          //     // } else {
-          //     //   Map<int, List<Fee>?> feesMap = snapshot.data!.item2 ?? {};
-          //     //   List<Fee> fees = feesMap[widget.apartment.id] ?? [];
-          //
-          //       // return Column(
-          //       //   crossAxisAlignment: CrossAxisAlignment.start,
-          //       //   children: [
-          //       //     ProfileCard(apartment: widget.apartment),
-          //       //     FeesList(fees: fees, apartment: widget.apartment),
-          //       //     SizedBox(height: apartmentBalance! > 0 ? 80.0 : 0.0),
-          //       //   ],
-          //       // );
-          //     // }
-          //   },
-          // ),
-        ),
-      ),
-    );
+              SizedBox(height: W / 40),
+              StreamBuilder(
+                  stream: globalService.fees$.stream,
+                  builder: (context, snapshot) {
+                    if (globalService.fees$.value == null) {
+                      return Center(child: CircularProgressIndicator(color: GlobalConfig.primaryColor));
+                    } else if (globalService.fees$.value!.isEmpty) return const Center(child: Text("Borcunuz bulunmamaktadır."));
+                    return Expanded(
+                        child: ListView.builder(
+                            itemCount: globalService.fees$.value?.length,
+                            itemBuilder: (context, index) {
+                              var item = globalService.fees$.value![index];
+                              return ListTile(
+                                title: Text(item.feeAmount.toString()),
+                                subtitle: Text(item.description),
+                                trailing: Text(item.feeDate.toString()),
+                              );
+                              // return Text('${}');
+                            }));
+                  })
+            ])));
   }
 }

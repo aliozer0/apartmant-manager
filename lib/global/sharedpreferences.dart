@@ -16,4 +16,12 @@ class PreferenceService {
   static Future<String?> getApartmentName() async {
     return prefs.getString('apartment_name');
   }
+
+  static Future<void> setApartmentUid(String apartmentUid) async {
+    await prefs.setString('apartment_uid', apartmentUid);
+  }
+
+  static Future<String?> getApartmentUid() async {
+    return prefs.getString('apartment_uid');
+  }
 }
