@@ -269,7 +269,7 @@ class _NewsPageState extends State<NewsPage> {
           Text(
             dateFormat.format(endDate),
             style: AppTextStyles.cardText.copyWith(
-              color: Colors.grey[700],
+              color: Colors.grey[800],
             ),
           ),
         ],
