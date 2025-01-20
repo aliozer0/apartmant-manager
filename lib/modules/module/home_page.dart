@@ -167,7 +167,7 @@ class _HomePageState extends State<HomePage> {
             ),
             SizedBox(height: width / 40),
             Text(
-              "${apartments.first.name} | ${apartments.first.blockName}",
+              apartments.first.name!,
               style: AppTextStyles.titleBold.copyWith(color: Colors.white),
             ),
           ],
